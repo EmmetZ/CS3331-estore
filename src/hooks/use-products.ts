@@ -44,7 +44,7 @@ export function useDeleteProduct() {
   });
 }
 
-export function refreshProducts() {
+export function useRefreshProducts() {
   const qc = useQueryClient();
-  return qc.invalidateQueries({ queryKey: ["products"] });
+  return () => qc.invalidateQueries({ queryKey: ["products"] });
 }

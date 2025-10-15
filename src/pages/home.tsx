@@ -17,7 +17,7 @@ const HomePage: React.FC = () => {
   return (
     <div className="px-4">
       <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="group flex gap-2 items-center">
+        <div className="group flex items-center gap-2">
           <h1 className="text-xl font-semibold">商品列表</h1>
           <Button
             variant="ghost"
