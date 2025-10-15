@@ -4,7 +4,7 @@ import AddButton from "@/components/add_button";
 import ProductGrid from "@/components/product_grid";
 import SearchBar from "@/components/search_bar";
 import { Button } from "@/components/ui/button";
-import { refreshProducts, useProducts } from "@/hooks/use-products";
+import { useProducts, useRefreshProducts } from "@/hooks/use-products";
 
 const HomePage: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -13,6 +13,7 @@ const HomePage: React.FC = () => {
 
   const doSearch = (value: string) => setQuery(value.trim());
   const clearSearch = () => setQuery("");
+  const refresh = useRefreshProducts();
 
   return (
     <div className="px-4">
@@ -23,7 +24,7 @@ const HomePage: React.FC = () => {
             variant="ghost"
             size="sm"
             className="opacity-0 group-hover:opacity-100"
-            onClick={() => refreshProducts()}
+            onClick={refresh}
           >
             <RefreshCcw className="size-4" />
           </Button>
