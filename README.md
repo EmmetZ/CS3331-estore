@@ -1,5 +1,11 @@
 # 商品交易 APP
 
+## 下载
+
+请前往[release](https://github.com/EmmetZ/CS3331-estore/releases/latest)页面下载对应平台的安装包。
+
+![download](./assets/download.png)
+
 ## 软件功能
 
 1. 添加物品
