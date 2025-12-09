@@ -44,6 +44,7 @@ func main() {
 	routes := []route.RouteModule{
 		route.NewUserRoutesModule(db),
 		route.NewAuthRoutesModule(authMiddleware),
+		route.NewProductRoutesModule(db),
 	}
 
 	// Register routes

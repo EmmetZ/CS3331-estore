@@ -11,6 +11,9 @@ type User struct {
 
 	// One-to-one relationship with UserAuth (shared primary key)
 	UserAuth UserAuth `json:"-" gorm:"foreignKey:ID;references:ID;constraint:OnDelete:CASCADE;OnUpdate:CASCADE"`
+
+	// One-to-many relationship with Product
+	Products []Product `json:"products,omitempty" gorm:"foreignKey:UserID"`
 }
 
 // UserAuth stores user authentication information
