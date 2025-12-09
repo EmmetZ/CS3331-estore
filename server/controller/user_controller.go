@@ -3,13 +3,11 @@ package controller
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"estore-server/dto"
-	"estore-server/middleware"
-	"estore-server/models"
 	"estore-server/service"
 	"estore-server/service/impl"
+	"estore-server/utils"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -49,10 +47,13 @@ func (uc *UserController) Register(c *gin.Context) {
 }
 
 func (uc *UserController) GetMe(c *gin.Context) {
-	claims, _ := c.Get(middleware.IdentityKey)
-	userId := claims.(*models.User).ID
+	currentUser, err := utils.GetUserFromCtx(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, dto.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
+		return
+	}
 
-	user, err := uc.UserService.GetUser(userId)
+	user, err := uc.UserService.GetUser(currentUser.ID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(http.StatusInternalServerError, err.Error()))
@@ -70,13 +71,13 @@ func (uc *UserController) GetMe(c *gin.Context) {
 
 func (uc *UserController) GetUser(c *gin.Context) {
 	idParam := c.Param("id")
-	userID, err := strconv.ParseUint(idParam, 10, 32)
+	userID, err := utils.ParseUintParam(idParam)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
 		return
 	}
 
-	user, err := uc.UserService.GetUser(uint(userID))
+	user, err := uc.UserService.GetUser(userID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, dto.NewErrorResponse(http.StatusNotFound, "User not found"))
@@ -86,29 +87,27 @@ func (uc *UserController) GetUser(c *gin.Context) {
 		return
 	}
 
-	responseData := dto.UserResponse{
-		ID:       user.ID,
-		Username: user.Username,
-		IsAdmin:  user.IsAdmin,
-	}
-
-	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, responseData, "User retrieved successfully"))
+	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, user, "User retrieved successfully"))
 }
 
 func (uc *UserController) UpdateUser(c *gin.Context) {
 	idParam := c.Param("id")
-	targetUserID, err := strconv.ParseUint(idParam, 10, 32)
+	targetUserID, err := utils.ParseUintParam(idParam)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
 		return
 	}
 
-	claims, _ := c.Get(middleware.IdentityKey)
-	requestingUserID := claims.(*models.User).ID
-	isAdmin := claims.(*models.User).IsAdmin
+	requester, err := utils.GetUserFromCtx(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, dto.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
+		return
+	}
+	requestingUserID := requester.ID
+	isAdmin := requester.IsAdmin
 
 	// Only allow admin or the user themselves to update the account
-	if !isAdmin && requestingUserID != uint(targetUserID) {
+	if !isAdmin && requestingUserID != targetUserID {
 		c.JSON(http.StatusForbidden, dto.NewErrorResponse(http.StatusForbidden, "Cannot update another user's information"))
 		return
 	}
@@ -119,7 +118,7 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := uc.UserService.UpdateUser(uint(targetUserID), req.Username)
+	user, err := uc.UserService.UpdateUser(targetUserID, req.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
@@ -136,19 +135,23 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 
 func (uc *UserController) UpdateUserPassword(c *gin.Context) {
 	idParam := c.Param("id")
-	targetUserID, err := strconv.ParseUint(idParam, 10, 32)
+	targetUserID, err := utils.ParseUintParam(idParam)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
 		return
 	}
 
 	// Check if requesting user is an admin
-	claims, _ := c.Get(middleware.IdentityKey)
-	requestingUserID := claims.(*models.User).ID
-	isAdmin := claims.(*models.User).IsAdmin
+	requester, err := utils.GetUserFromCtx(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, dto.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
+		return
+	}
+	requestingUserID := requester.ID
+	isAdmin := requester.IsAdmin
 
 	// Only allow admin or the user themselves to update the password
-	if !isAdmin && requestingUserID != uint(targetUserID) {
+	if !isAdmin && requestingUserID != targetUserID {
 		c.JSON(http.StatusForbidden, dto.NewErrorResponse(http.StatusForbidden, "Cannot update another user's password"))
 		return
 	}
@@ -159,7 +162,7 @@ func (uc *UserController) UpdateUserPassword(c *gin.Context) {
 		return
 	}
 
-	if err := uc.UserService.UpdateUserPassword(uint(targetUserID), req.OldPassword, req.NewPassword); err != nil {
+	if err := uc.UserService.UpdateUserPassword(targetUserID, req.OldPassword, req.NewPassword); err != nil {
 		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
@@ -188,13 +191,13 @@ func (uc *UserController) GetAllUsers(c *gin.Context) {
 
 func (uc *UserController) DeleteUser(c *gin.Context) {
 	idParam := c.Param("id")
-	userID, err := strconv.ParseUint(idParam, 10, 32)
+	userID, err := utils.ParseUintParam(idParam)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, dto.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
 		return
 	}
 
-	err = uc.UserService.DeleteUser(uint(userID))
+	err = uc.UserService.DeleteUser(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return

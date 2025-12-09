@@ -65,9 +65,6 @@ func (s *UserServiceImpl) GetUser(userID uint) (*models.User, error) {
 	user, err := gorm.G[models.User](s.DB).Where("id = ?", userID).First(ctx)
 
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("user not found")
-		}
 		return nil, err
 	}
 
@@ -91,9 +88,6 @@ func (s *UserServiceImpl) UpdateUser(userID uint, username string) (*models.User
 	ctx := context.Background()
 	user, err := gorm.G[models.User](s.DB).Where("id = ?", userID).First(ctx)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, errors.New("user not found")
-		}
 		return nil, err
 	}
 
@@ -113,9 +107,6 @@ func (s *UserServiceImpl) UpdateUserPassword(userID uint, oldPassword, newPasswo
 	ctx := context.Background()
 	userAuth, err := gorm.G[models.UserAuth](s.DB).Where("id = ?", userID).First(ctx)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return errors.New("user not found")
-		}
 		return err
 	}
 
