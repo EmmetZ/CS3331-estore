@@ -21,8 +21,10 @@ type UpdatePasswordRequest struct {
 type UserResponse struct {
 	ID       uint   `json:"id"`
 	Username string `json:"username"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	Address  string `json:"address"`
 	IsAdmin  bool   `json:"is_admin"`
-	Token    string `json:"token,omitempty"`
 }
 
 // UsersResponse DTO for multiple users
