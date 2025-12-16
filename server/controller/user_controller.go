@@ -37,7 +37,7 @@ func (uc *UserController) Register(c *gin.Context) {
 		return
 	}
 
-	responseData := dto.UserResponse{
+	responseData := dto.UserDTO{
 		ID:       user.ID,
 		Username: user.Username,
 		IsAdmin:  user.IsAdmin,
@@ -60,13 +60,9 @@ func (uc *UserController) GetMe(c *gin.Context) {
 		return
 	}
 
-	responseData := dto.UserResponse{
-		ID:       user.ID,
-		Username: user.Username,
-		IsAdmin:  user.IsAdmin,
-	}
+	userDto := dto.NewUserDTO(user)
 
-	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, responseData, "User retrieved successfully"))
+	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, userDto, "User retrieved successfully"))
 }
 
 func (uc *UserController) GetUser(c *gin.Context) {
@@ -87,7 +83,7 @@ func (uc *UserController) GetUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, user, "User retrieved successfully"))
+	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, dto.NewUserDTO(user), "User retrieved successfully"))
 }
 
 func (uc *UserController) UpdateUser(c *gin.Context) {
@@ -124,11 +120,7 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	responseData := dto.UserResponse{
-		ID:       user.ID,
-		Username: user.Username,
-		IsAdmin:  user.IsAdmin,
-	}
+	responseData := dto.NewUserDTO(user)
 
 	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, responseData, "User updated successfully"))
 }
@@ -177,13 +169,9 @@ func (uc *UserController) GetAllUsers(c *gin.Context) {
 		return
 	}
 
-	var userResponses []dto.UserResponse
+	var userResponses []dto.UserDTO
 	for _, u := range users {
-		userResponses = append(userResponses, dto.UserResponse{
-			ID:       u.ID,
-			Username: u.Username,
-			IsAdmin:  u.IsAdmin,
-		})
+		userResponses = append(userResponses, *dto.NewUserDTO(&u))
 	}
 
 	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, userResponses, "Users retrieved successfully"))

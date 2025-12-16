@@ -1,5 +1,7 @@
 package dto
 
+import "estore-server/models"
+
 // RegisterRequest DTO for user registration
 type RegisterRequest struct {
 	Username string `json:"username" binding:"required"`
@@ -17,8 +19,8 @@ type UpdatePasswordRequest struct {
 	NewPassword string `json:"new_password" binding:"required,min=6"`
 }
 
-// UserResponse DTO for user information
-type UserResponse struct {
+// UserDTO DTO for user information
+type UserDTO struct {
 	ID       uint   `json:"id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
@@ -27,7 +29,18 @@ type UserResponse struct {
 	IsAdmin  bool   `json:"is_admin"`
 }
 
+func NewUserDTO(user *models.User) *UserDTO {
+	return &UserDTO{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		Phone:    user.Phone,
+		Address:  user.Address,
+		IsAdmin:  user.IsAdmin,
+	}
+}
+
 // UsersResponse DTO for multiple users
 type UsersResponse struct {
-	Data []UserResponse `json:"data"`
+	Data []UserDTO `json:"data"`
 }

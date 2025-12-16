@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -86,7 +85,6 @@ func identityHandler(c *gin.Context) any {
 }
 
 func authorizator(c *gin.Context, data any) bool {
-	fmt.Println(data)
 	if user, ok := data.(*models.User); ok {
 		// admin routes include "/admin/"
 		path := c.Request.URL.Path
