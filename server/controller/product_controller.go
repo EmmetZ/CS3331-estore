@@ -52,7 +52,7 @@ func (pc *ProductController) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	product, err := pc.ProductService.CreateProduct(user.ID, req.Name, req.Desc, req.Price)
+	product, err := pc.ProductService.CreateProduct(user.ID, req.Name, req.Description, req.Price)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
@@ -96,7 +96,7 @@ func (pc *ProductController) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	updatedProduct, err := pc.ProductService.UpdateProduct(productID, req.Name, req.Desc, req.Price)
+	updatedProduct, err := pc.ProductService.UpdateProduct(productID, req.Name, req.Description, req.Price)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusNotFound, dto.NewErrorResponse(http.StatusNotFound, "Product not found"))
@@ -151,7 +151,7 @@ func ProductResponseFromModel(product *models.Product) dto.ProductResponse {
 	return dto.ProductResponse{
 		ID:    product.ID,
 		Name:  product.Name,
-		Desc:  product.Desc,
+		Description:  product.Description,
 		Price: product.Price,
 	}
 }

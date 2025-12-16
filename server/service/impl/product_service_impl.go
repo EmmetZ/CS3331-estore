@@ -21,14 +21,14 @@ func NewProductServiceImpl(db *gorm.DB) *ProductServiceImpl {
 	return &ProductServiceImpl{DB: db}
 }
 
-func (s *ProductServiceImpl) CreateProduct(userID uint, name, desc string, price int) (*models.Product, error) {
+func (s *ProductServiceImpl) CreateProduct(userID uint, name, description string, price int) (*models.Product, error) {
 	ctx := context.Background()
 
 	product := &models.Product{
-		UserID: userID,
-		Name:   name,
-		Desc:   desc,
-		Price:  price,
+		UserID:      userID,
+		Name:        name,
+		Description: description,
+		Price:       price,
 	}
 
 	if err := gorm.G[models.Product](s.DB).Create(ctx, product); err != nil {
@@ -48,7 +48,7 @@ func (s *ProductServiceImpl) GetProduct(productID uint) (*models.Product, error)
 	return &product, nil
 }
 
-func (s *ProductServiceImpl) UpdateProduct(productID uint, name, desc string, price int) (*models.Product, error) {
+func (s *ProductServiceImpl) UpdateProduct(productID uint, name, description string, price int) (*models.Product, error) {
 	ctx := context.Background()
 	product, err := gorm.G[models.Product](s.DB).Where("id = ?", productID).First(ctx)
 	if err != nil {
@@ -56,7 +56,7 @@ func (s *ProductServiceImpl) UpdateProduct(productID uint, name, desc string, pr
 	}
 
 	product.Name = name
-	product.Desc = desc
+	product.Description = description
 	product.Price = price
 
 	if _, err := gorm.G[models.Product](s.DB).Updates(ctx, product); err != nil {
