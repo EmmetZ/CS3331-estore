@@ -1,6 +1,8 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use lazy_static::lazy_static;
 use tauri::Manager;
+use tracing::info;
+use tracing_subscriber;
 
 mod api;
 mod app;
@@ -15,6 +17,10 @@ lazy_static! {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // init logging
+    tracing_subscriber::fmt::init();
+    info!("tracing initialized, for full logs, run with RUST_LOG=estore_lib=debug");
+
     tauri::Builder::default()
         .setup(|app| {
             let handle = app.handle();

@@ -3,6 +3,7 @@ use crate::error::AppError;
 use crate::model::{ApiResponse, Product, ProductPayload, User};
 use std::sync::Arc;
 use tokio::sync::RwLock;
+use tracing::debug;
 
 pub struct App {
     client: Arc<Client>,
@@ -37,17 +38,30 @@ impl App {
     }
 
     pub async fn get_me(&self) -> Result<ApiResponse<User>, AppError> {
-        let resp = self.client.get_me().await?;
-        if self.user.read().await.is_none() {
-            if resp.data.is_some() {
-                let mut guard = self.user.write().await;
-                *guard = resp.data.clone();
-                return Ok(resp);
-            } else {
-                return Err(AppError::api(resp.code, resp.message));
-            }
+        // Try to return cached user first
+        if let Some(user) = &*self.user.read().await {
+            debug!(username = %user.username, email = %user.email,"get current user from client");
+            return Ok(ApiResponse::new(
+                200,
+                "OK".to_string(),
+                true,
+                Some(user.clone()),
+            ));
         }
-        Ok(resp)
+
+        // Fallback to network request and cache result
+        debug!("fetching current user from API");
+        let resp = self.client.get_me().await?;
+        if resp.data.is_some() {
+            let mut guard = self.user.write().await;
+            *guard = resp.data.clone();
+            if let Some(user) = &resp.data {
+                debug!(username = %user.username, email = %user.email, "fetched and cached current user");
+            }
+            return Ok(resp);
+        }
+
+        Err(AppError::api(resp.code, resp.message))
     }
 
     pub async fn search_products(
