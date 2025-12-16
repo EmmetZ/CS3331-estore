@@ -9,8 +9,10 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "eslint .",
-    "fmt": " prettier --write . | rg -v 'unchanged' | xargs",
-    "fmt:check": "prettier --check ."
+    "fmt": "prettier --write -l .",
+    "check": "prettier --check -l .",
+    "fmt:rs": "cargo fmt --manifest-path src-tauri/Cargo.toml",
+    "check:rs": "cargo check --manifest-path src-tauri/Cargo.toml"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
