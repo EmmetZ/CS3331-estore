@@ -1,0 +1,50 @@
+import { invoke } from "@tauri-apps/api/core";
+import { getErrorMessage } from "@/lib/utils";
+import { ApiResponse, LoginPayload, User } from "@/types";
+
+const AUTH_ERROR_KEYWORDS = ["login", "token", "unauthorized", "401", "403"];
+
+export async function login(payload: LoginPayload) {
+  try {
+    const resp = await invoke<ApiResponse<null>>("login", { ...payload });
+    if (!resp.success) {
+      throw new Error(resp.message || "登录失败");
+    }
+    return resp;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+}
+
+export async function logout() {
+  try {
+    const resp = await invoke<ApiResponse<null>>("logout");
+    if (!resp.success) {
+      throw new Error(resp.message || "退出登录失败");
+    }
+    return resp;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+}
+
+export async function getCurrentUser(): Promise<User | null> {
+  try {
+    const resp = await invoke<ApiResponse<User>>("get_me");
+    if (!resp.data) {
+      return null;
+    }
+    return resp.data;
+  } catch (error) {
+    const message = getErrorMessage(error);
+    if (isUnauthorizedMessage(message)) {
+      return null;
+    }
+    throw new Error(message);
+  }
+}
+
+function isUnauthorizedMessage(message: string) {
+  const normalized = message.toLowerCase();
+  return AUTH_ERROR_KEYWORDS.some((keyword) => normalized.includes(keyword));
+}

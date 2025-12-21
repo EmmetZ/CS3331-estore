@@ -1,7 +1,7 @@
 import { useLocation } from "react-router";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { SideBarItem } from "@/types";
-import { Separator } from "./ui/separator";
-import { SidebarTrigger } from "./ui/sidebar";
 
 interface Props {
   items: SideBarItem[];

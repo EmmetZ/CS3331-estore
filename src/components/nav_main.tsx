@@ -1,13 +1,13 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
-import { SideBarItem } from "@/types";
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "./ui/sidebar";
+} from "@/components/ui/sidebar";
+import { SideBarItem } from "@/types";
 
 interface Props {
   items: SideBarItem[];

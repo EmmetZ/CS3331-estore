@@ -1,47 +1,55 @@
 import { Package, ShoppingCart } from "lucide-react";
-import React, { useEffect } from "react";
-import { Outlet } from "react-router";
-import AppSideBar from "@/components/app_sidebar";
-import { PageHeader } from "@/components/page_header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import React from "react";
+import FullScreenError from "@/components/full_screen_error";
+import FullScreenLoader from "@/components/full_screen_loader";
+import LoginPanel from "@/components/login_panel";
+import ProtectedAppShell from "@/components/protected_app_shell";
 import { Toaster } from "@/components/ui/sonner";
-import { initDb } from "@/lib/db";
+import { useAuthContext } from "@/contexts/auth-context";
 import { SideBarItem } from "@/types";
 
-const DefaultLayout: React.FC = () => {
-  const items: SideBarItem[] = [
-    {
-      key: "home",
-      title: "主页",
-      url: "/",
-      icon: Package,
-    },
-    {
-      key: "cart",
-      title: "购物车",
-      url: "/cart",
-      icon: ShoppingCart,
-    },
-  ];
+const sidebarItems: SideBarItem[] = [
+  {
+    key: "home",
+    title: "主页",
+    url: "/",
+    icon: Package,
+  },
+  {
+    key: "cart",
+    title: "购物车",
+    url: "/cart",
+    icon: ShoppingCart,
+  },
+];
 
-  useEffect(() => {
-    initDb();
-  }, []);
+const DefaultLayout: React.FC = () => {
+  const { user, isLoading, error, refetch } = useAuthContext();
+
+  let content: React.ReactNode = null;
+
+  if (isLoading) {
+    content = <FullScreenLoader />;
+  } else if (error) {
+    content = (
+      <FullScreenError
+        message={error.message}
+        onRetry={() => {
+          void refetch();
+        }}
+      />
+    );
+  } else if (!user) {
+    content = <LoginPanel />;
+  } else {
+    content = <ProtectedAppShell items={sidebarItems} />;
+  }
 
   return (
-    <SidebarProvider>
-      <AppSideBar items={items} />
-      <SidebarInset>
-        <PageHeader items={items} />
-        <div className="flex flex-1 flex-col">
-          <div className="@container/main flex flex-1 flex-col gap-2">
-            <Outlet />
-          </div>
-          <Toaster />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      {content}
+      <Toaster />
+    </>
   );
 };
-
 export default DefaultLayout;

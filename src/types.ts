@@ -7,21 +7,43 @@ export interface SideBarItem {
   icon: LucideIcon;
 }
 
+export interface ApiResponse<T> {
+  code: number;
+  message: string;
+  success: boolean;
+  data: T | null;
+}
+
+export interface LoginPayload {
+  username: string;
+  password: string;
+}
+
 // form data interface
 export interface ProductFormData {
-  product_name: string;
-  product_desc: string;
-  price: number;
   name: string;
-  contact: string;
+  description: string;
+  price: number;
+}
+
+export interface ProductPayload {
+  name: string;
+  description: string;
+  price: number;
 }
 
 export interface Product {
   id: number;
   name: string;
-  desc: string;
+  description: string;
   price: number;
-  owner_name: string | null;
-  owner_contact: string | null;
-  created_at: string;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
+  is_admin: boolean;
 }

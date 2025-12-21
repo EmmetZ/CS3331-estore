@@ -1,35 +1,42 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  addProduct,
+  createProduct,
   deleteProduct,
-  getProducts,
   searchProducts,
-} from "@/lib/db";
-import { ProductFormData } from "@/types";
-import { Product } from "@/types";
+  updateProduct,
+} from "@/service/product";
+import { Product, ProductPayload } from "@/types";
 
-export function useProducts(query?: string) {
-  const key = ["products", query ?? ""] as const;
+const productKeys = {
+  all: ["products"] as const,
+  list: (keyword: string) => [...productKeys.all, keyword] as const,
+};
+
+export function useProducts(keyword: string) {
   return useQuery<Product[], Error>({
-    queryKey: key,
-    queryFn: async () => {
-      if (query && query.length > 0) {
-        const res = await searchProducts(query);
-        return res as Product[];
-      }
-
-      const res = await getProducts();
-      return res as Product[];
-    },
+    queryKey: productKeys.list(keyword),
+    queryFn: () => searchProducts(keyword),
+    staleTime: 30_000,
   });
 }
 
 export function useAddProduct() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: ProductFormData) => addProduct(data),
+    mutationFn: (payload: ProductPayload) => createProduct(payload),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["products"] });
+      await qc.invalidateQueries({ queryKey: productKeys.all });
+    },
+  });
+}
+
+export function useUpdateProduct() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: ProductPayload }) =>
+      updateProduct(id, payload),
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: productKeys.all });
     },
   });
 }
@@ -39,12 +46,9 @@ export function useDeleteProduct() {
   return useMutation({
     mutationFn: (id: number) => deleteProduct(id),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["products"] });
+      await qc.invalidateQueries({ queryKey: productKeys.all });
     },
   });
 }
 
-export function useRefreshProducts() {
-  const qc = useQueryClient();
-  return () => qc.invalidateQueries({ queryKey: ["products"] });
-}
+export const productQueryKeys = productKeys;

@@ -1,31 +1,45 @@
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut } from "lucide-react";
 import React from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "./ui/sidebar";
+} from "@/components/ui/sidebar";
+import { Spinner } from "@/components/ui/spinner";
+import { useAuthContext } from "@/contexts/auth-context";
+
+const getInitials = (name: string) => {
+  if (!name) return "?";
+  return name.trim().slice(0, 2).toUpperCase();
+};
 
 const NavUser: React.FC = () => {
+  const { user, logout, isLoggingOut } = useAuthContext();
+  if (!user) return null;
+
   const { isMobile } = useSidebar();
+
+  const initials = getInitials(user.username);
+
+  const handleLogout = (
+    event: Event | React.MouseEvent | React.KeyboardEvent
+  ) => {
+    event.preventDefault();
+    if (!isLoggingOut) {
+      logout();
+    }
+  };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -36,16 +50,14 @@ const NavUser: React.FC = () => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="@shadcn"
-                />
-                <AvatarFallback className="rounded-lg">avatar</AvatarFallback>
+                <AvatarImage alt={user.username} />
+                <AvatarFallback className="rounded-lg">
+                  {initials}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                {/* TODO */}
-                <span className="truncate font-medium">Username</span>
-                <span className="truncate text-xs">email</span>
+                <span className="truncate font-medium">{user.username}</span>
+                <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -59,45 +71,25 @@ const NavUser: React.FC = () => {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage alt={user.username} />
+                  <AvatarFallback className="rounded-lg">
+                    {initials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  {/* TODO */}
-                  <span className="truncate font-medium">Username</span>
-                  <span className="truncate text-xs">email</span>
+                  <span className="truncate font-medium">{user.username}</span>
+                  <span className="truncate text-xs">{user.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOut />
-              Log out
+            <DropdownMenuItem onSelect={handleLogout} disabled={isLoggingOut}>
+              {isLoggingOut ? (
+                <Spinner className="size-4" />
+              ) : (
+                <LogOut className="size-4" />
+              )}
+              {isLoggingOut ? "正在退出..." : "退出登录"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

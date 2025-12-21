@@ -8,13 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-  FieldSeparator,
-  FieldSet,
-} from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,7 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAddProduct } from "@/hooks/use-products";
-import { ProductFormData } from "@/types";
+import { ProductFormData, ProductPayload } from "@/types";
 
 // mark component for required fields
 const RequiredMark = () => <span className="text-red-500">*</span>;
@@ -37,11 +31,9 @@ const AddButton: React.FC<Props> = ({ className }) => {
   const [isOpen, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<ProductFormData>({
-    product_name: "",
-    product_desc: "",
-    price: 0,
     name: "",
-    contact: "",
+    description: "",
+    price: 0,
   });
 
   const handleInputChange = (
@@ -57,29 +49,32 @@ const AddButton: React.FC<Props> = ({ className }) => {
     e.preventDefault();
 
     // required field validation
-    if (
-      !formData.product_name ||
-      !formData.product_desc ||
-      formData.price <= 0 ||
-      !formData.name ||
-      !formData.contact
-    ) {
+    if (!formData.name || !formData.description || formData.price <= 0) {
       toast.error("请填写所有必填字段，价格必须大于0");
+      return;
+    }
+
+    const payload: ProductPayload = {
+      name: formData.name.trim(),
+      description: formData.description.trim(),
+      price: Math.round(formData.price * 100),
+    };
+
+    if (!payload.name || !payload.description || payload.price <= 0) {
+      toast.error("请输入合法的商品信息");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      await mutation.mutateAsync(formData);
+      await mutation.mutateAsync(payload);
 
       // reset form
       setFormData({
-        product_name: "",
-        product_desc: "",
-        price: 0,
         name: "",
-        contact: "",
+        description: "",
+        price: 0,
       });
 
       setOpen(false);
@@ -94,11 +89,9 @@ const AddButton: React.FC<Props> = ({ className }) => {
 
   const handleCancel = () => {
     setFormData({
-      product_name: "",
-      product_desc: "",
-      price: 0,
       name: "",
-      contact: "",
+      description: "",
+      price: 0,
     });
     setOpen(false);
   };
@@ -115,16 +108,14 @@ const AddButton: React.FC<Props> = ({ className }) => {
             <FieldSet>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="product_name">
+                  <FieldLabel htmlFor="name">
                     商品名称 <RequiredMark />
                   </FieldLabel>
                   <Input
-                    id="product_name"
+                    id="name"
                     type="text"
-                    value={formData.product_name}
-                    onChange={(e) =>
-                      handleInputChange("product_name", e.target.value)
-                    }
+                    value={formData.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
                     placeholder="请输入商品名称"
                     required
                   />
@@ -141,7 +132,12 @@ const AddButton: React.FC<Props> = ({ className }) => {
                     step="0.01"
                     value={formData.price}
                     onChange={(e) =>
-                      handleInputChange("price", parseFloat(e.target.value))
+                      handleInputChange(
+                        "price",
+                        Number.isNaN(parseFloat(e.target.value))
+                          ? 0
+                          : parseFloat(e.target.value)
+                      )
                     }
                     placeholder="请输入价格"
                     required
@@ -149,50 +145,18 @@ const AddButton: React.FC<Props> = ({ className }) => {
                 </Field>
 
                 <Field>
-                  <FieldLabel htmlFor="product_desc">
+                  <FieldLabel htmlFor="description">
                     商品描述 <RequiredMark />
                   </FieldLabel>
                   <Textarea
-                    id="product_desc"
-                    value={formData.product_desc}
+                    id="description"
+                    value={formData.description}
                     onChange={(e) =>
-                      handleInputChange("product_desc", e.target.value)
+                      handleInputChange("description", e.target.value)
                     }
                     placeholder="请输入商品描述"
                     required
                     className="min-h-24"
-                  />
-                </Field>
-              </FieldGroup>
-            </FieldSet>
-            <FieldSeparator className="my-2" />
-            <FieldSet>
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="name">
-                    姓名 <RequiredMark />
-                  </FieldLabel>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    placeholder="请输入您的姓名"
-                    required
-                  />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="contact">
-                    联系方式 <RequiredMark />
-                  </FieldLabel>
-                  <Input
-                    id="contact"
-                    value={formData.contact}
-                    onChange={(e) =>
-                      handleInputChange("contact", e.target.value)
-                    }
-                    placeholder="请输入联系方式"
-                    required
                   />
                 </Field>
               </FieldGroup>

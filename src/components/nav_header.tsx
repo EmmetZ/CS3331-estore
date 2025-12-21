@@ -1,6 +1,10 @@
 import { Store } from "lucide-react";
 import React from "react";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 
 const NavHeader: React.FC = () => {
   return (

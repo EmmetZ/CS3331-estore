@@ -1,5 +1,6 @@
 import { Search, X } from "lucide-react";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
 import {
   InputGroup,
   InputGroupAddon,
@@ -7,11 +8,11 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
-import { Button } from "./ui/button";
 
 interface Props {
   isSearched: boolean;
   isLoading: boolean;
+  value?: string;
   onSearch: (value: string) => void;
   onClear: () => void;
 }
@@ -21,8 +22,15 @@ const SearchBar: React.FC<Props> = ({
   onSearch,
   onClear,
   isLoading,
+  value,
 }) => {
   const ref = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.value = value ?? "";
+    }
+  }, [value]);
 
   return (
     <div className="flex items-center gap-2">

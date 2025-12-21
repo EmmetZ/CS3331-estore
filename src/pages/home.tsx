@@ -4,16 +4,17 @@ import AddButton from "@/components/add_button";
 import ProductGrid from "@/components/product_grid";
 import SearchBar from "@/components/search_bar";
 import { Button } from "@/components/ui/button";
-import { useProducts, useRefreshProducts } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
 
 const HomePage: React.FC = () => {
   const [query, setQuery] = useState("");
-
-  const { data, isLoading, isError, error } = useProducts(query);
+  const { data, isLoading, isError, error, refetch } = useProducts(query);
 
   const doSearch = (value: string) => setQuery(value.trim());
   const clearSearch = () => setQuery("");
-  const refresh = useRefreshProducts();
+  const refresh = () => {
+    void refetch();
+  };
 
   return (
     <div className="px-4">
@@ -32,6 +33,7 @@ const HomePage: React.FC = () => {
         <div className="w-full sm:w-1/3">
           <SearchBar
             isSearched={query !== ""}
+            value={query}
             onSearch={doSearch}
             onClear={clearSearch}
             isLoading={isLoading}
