@@ -49,6 +49,7 @@ func initParams(db *gorm.DB) *ginjwt.GinJWTMiddleware {
 		Authorizer:      authorizator,
 		LoginResponse:   loginResponse,
 		IdentityKey:     IdentityKey,
+		RefreshResponse: refreshResponse,
 
 		TimeFunc: time.Now,
 	}
@@ -114,4 +115,19 @@ func loginResponse(c *gin.Context, token *core.Token) {
 	}
 
 	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, response, "Login successful"))
+}
+
+func refreshResponse(c *gin.Context, token *core.Token) {
+	response := gin.H{
+		"access_token": token.AccessToken,
+		"token_type":   token.TokenType,
+		"expires_in":   token.ExpiresIn(),
+	}
+
+	// Include refresh token if present
+	if token.RefreshToken != "" {
+		response["refresh_token"] = token.RefreshToken
+	}
+
+	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, response, "Token refreshed successfully"))
 }
