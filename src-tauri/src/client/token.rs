@@ -25,13 +25,14 @@ pub struct Tokens {
 
 impl Tokens {
     pub fn header_value(&self, use_refresh: bool) -> Option<String> {
-        let token = if use_refresh {
-            self.refresh_token.as_ref()
+        if use_refresh {
+            let token = self.refresh_token.as_ref()?;
+            Some(format!("{}", token))
         } else {
-            self.access_token.as_ref()
-        }?;
-        let token_type = self.token_type.as_deref().unwrap_or("Bearer");
-        Some(format!("{} {}", token_type, token))
+            let token = self.access_token.as_ref()?;
+            let token_type = self.token_type.as_deref().unwrap_or("Bearer");
+            Some(format!("{} {}", token_type, token))
+        }
     }
 }
 

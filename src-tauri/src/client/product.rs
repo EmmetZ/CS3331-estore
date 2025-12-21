@@ -9,7 +9,7 @@ impl Client {
         &self,
         keyword: Option<String>,
     ) -> Result<ApiResponse<Vec<Product>>, AppError> {
-        let header = self.access_header().await?;
+        let header = self.auth_header().await?;
         let trimmed = keyword.and_then(|val| {
             let value = val.trim().to_string();
             if value.is_empty() {
@@ -25,15 +25,15 @@ impl Client {
             None
         };
 
-        self.get("/product", query_ref, Some(header)).await
+        self.get("/product", query_ref, Some(header), true).await
     }
 
     pub async fn create_product(
         &self,
         payload: &ProductPayload,
     ) -> Result<ApiResponse<Product>, AppError> {
-        let header = self.access_header().await?;
-        self.post("/product", payload, Some(header)).await
+        let header = self.auth_header().await?;
+        self.post("/product", payload, Some(header), true).await
     }
 
     pub async fn update_product(
@@ -41,14 +41,14 @@ impl Client {
         product_id: u32,
         payload: &ProductPayload,
     ) -> Result<ApiResponse<Product>, AppError> {
-        let header = self.access_header().await?;
+        let header = self.auth_header().await?;
         let path = format!("/product/{}", product_id);
-        self.put(&path, payload, Some(header)).await
+        self.put(&path, payload, Some(header), true).await
     }
 
     pub async fn delete_product(&self, product_id: u32) -> Result<ApiResponse<()>, AppError> {
-        let header = self.access_header().await?;
+        let header = self.auth_header().await?;
         let path = format!("/product/{}", product_id);
-        self.delete::<()>(&path, Some(header)).await
+        self.delete::<()>(&path, Some(header), true).await
     }
 }
