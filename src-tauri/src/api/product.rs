@@ -5,6 +5,11 @@ use crate::{
 };
 
 #[tauri::command]
+pub async fn get_product(product_id: u32) -> Result<ApiResponse<Product>, AppError> {
+    APP.get_product(product_id).await
+}
+
+#[tauri::command]
 pub async fn search_products(
     keyword: Option<String>,
 ) -> Result<ApiResponse<Vec<Product>>, AppError> {

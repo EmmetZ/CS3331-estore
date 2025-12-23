@@ -71,6 +71,10 @@ impl App {
         self.client.search_products(keyword).await
     }
 
+    pub async fn get_product(&self, product_id: u32) -> Result<ApiResponse<Product>, AppError> {
+        self.client.get_product(product_id).await
+    }
+
     pub async fn create_product(
         &self,
         payload: ProductPayload,

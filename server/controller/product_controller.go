@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"estore-server/dto"
-	"estore-server/models"
 	"estore-server/service"
 	"estore-server/service/impl"
 	"estore-server/utils"
@@ -34,8 +33,33 @@ func (pc *ProductController) SearchProducts(c *gin.Context) {
 		return
 	}
 
-	responses := productsToResponse(products)
-	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, responses, "Products retrieved successfully"))
+	response := make([]dto.ProductResponse, 0, len(products))
+	for i := range products {
+		response = append(response, dto.NewProductResponse(&products[i]))
+	}
+	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, response, "Products retrieved successfully"))
+}
+
+// GetProductByID returns a single product by its ID
+func (pc *ProductController) GetProductByID(c *gin.Context) {
+	productID, err := utils.ParseUintParam(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, dto.NewErrorResponse(http.StatusBadRequest, "Invalid product ID"))
+		return
+	}
+
+	product, err := pc.ProductService.GetProduct(productID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, dto.NewErrorResponse(http.StatusNotFound, "Product not found"))
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(http.StatusInternalServerError, err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, dto.NewProductResponse(product), "Product retrieved successfully"))
 }
 
 // CreateProduct lets an authenticated user add a product under their account
@@ -58,7 +82,7 @@ func (pc *ProductController) CreateProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, dto.NewSuccessResponse(http.StatusCreated, ProductResponseFromModel(product), "Product created successfully"))
+	c.JSON(http.StatusCreated, dto.NewSuccessResponse(http.StatusCreated, dto.NewProductResponse(product), "Product created successfully"))
 }
 
 // UpdateProduct lets owners update their items while also granting admins override access
@@ -106,7 +130,7 @@ func (pc *ProductController) UpdateProduct(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, ProductResponseFromModel(updatedProduct), "Product updated successfully"))
+	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, dto.NewProductResponse(updatedProduct), "Product updated successfully"))
 }
 
 // DeleteProduct allows owners or admins to remove products
@@ -144,22 +168,4 @@ func (pc *ProductController) DeleteProduct(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, nil, "Product deleted successfully"))
-}
-
-// ProductResponseFromModel maps a Product model into a response DTO.
-func ProductResponseFromModel(product *models.Product) dto.ProductResponse {
-	return dto.ProductResponse{
-		ID:    product.ID,
-		Name:  product.Name,
-		Description:  product.Description,
-		Price: product.Price,
-	}
-}
-
-func productsToResponse(products []models.Product) []dto.ProductResponse {
-	responses := make([]dto.ProductResponse, 0, len(products))
-	for i := range products {
-		responses = append(responses, ProductResponseFromModel(&products[i]))
-	}
-	return responses
 }

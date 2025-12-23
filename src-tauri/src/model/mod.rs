@@ -66,6 +66,16 @@ pub struct Product {
     pub name: String,
     pub description: String,
     pub price: i32,
+    pub seller: Option<Seller>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct Seller {
+    pub id: u32,
+    pub username: String,
+    pub email: String,
+    pub phone: Option<String>,
+    pub address: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]

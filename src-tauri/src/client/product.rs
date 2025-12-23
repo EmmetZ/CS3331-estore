@@ -36,6 +36,13 @@ impl Client {
         self.post("/product", payload, Some(header), true).await
     }
 
+    pub async fn get_product(&self, product_id: u32) -> Result<ApiResponse<Product>, AppError> {
+        let header = self.auth_header().await?;
+        let path = format!("/product/{}", product_id);
+        self.get::<(), Product>(&path, None, Some(header), true)
+            .await
+    }
+
     pub async fn update_product(
         &self,
         product_id: u32,

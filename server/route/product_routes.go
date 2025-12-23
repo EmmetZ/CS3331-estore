@@ -22,6 +22,7 @@ func (prm *ProductRoutesModule) RegisterPublicRoutes(group *gin.RouterGroup) {}
 
 func (prm *ProductRoutesModule) RegisterUserRoutes(group *gin.RouterGroup) {
 	group.GET("/product", prm.controller.SearchProducts)
+	group.GET("/product/:id", prm.controller.GetProductByID)
 	group.POST("/product", prm.controller.CreateProduct)
 	group.PUT("/product/:id", prm.controller.UpdateProduct)
 	group.DELETE("/product/:id", prm.controller.DeleteProduct)

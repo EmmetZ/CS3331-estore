@@ -40,7 +40,7 @@ func (s *ProductServiceImpl) CreateProduct(userID uint, name, description string
 
 func (s *ProductServiceImpl) GetProduct(productID uint) (*models.Product, error) {
 	ctx := context.Background()
-	product, err := gorm.G[models.Product](s.DB).Where("id = ?", productID).First(ctx)
+	product, err := gorm.G[models.Product](s.DB).Preload("User", nil).Where("id = ?", productID).First(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (s *ProductServiceImpl) GetProduct(productID uint) (*models.Product, error)
 
 func (s *ProductServiceImpl) UpdateProduct(productID uint, name, description string, price int) (*models.Product, error) {
 	ctx := context.Background()
-	product, err := gorm.G[models.Product](s.DB).Where("id = ?", productID).First(ctx)
+	product, err := gorm.G[models.Product](s.DB).Preload("User", nil).Where("id = ?", productID).First(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (s *ProductServiceImpl) DeleteProduct(productID uint) error {
 func (s *ProductServiceImpl) SearchProducts(keyword string) ([]models.Product, error) {
 	ctx := context.Background()
 	keyword = strings.TrimSpace(keyword)
-	baseQuery := gorm.G[models.Product](s.DB)
+	baseQuery := gorm.G[models.Product](s.DB).Preload("User", nil)
 
 	if keyword != "" {
 		like := "%" + strings.ToLower(keyword) + "%"

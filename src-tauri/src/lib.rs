@@ -38,6 +38,7 @@ pub fn run() {
             api::auth::logout,
             api::auth::refresh_token,
             api::user::get_me,
+            api::product::get_product,
             api::product::search_products,
             api::product::create_product,
             api::product::update_product,
