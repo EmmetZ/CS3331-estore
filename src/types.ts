@@ -37,6 +37,15 @@ export interface Product {
   name: string;
   description: string;
   price: number;
+  seller?: Seller;
+}
+
+export interface Seller {
+  id: number;
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
 }
 
 export interface User {

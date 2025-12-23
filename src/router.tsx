@@ -2,6 +2,7 @@ import { createHashRouter } from "react-router";
 import { CartPage } from "@/pages/cart";
 import HomePage from "@/pages/home";
 import DefaultLayout from "@/pages/layout";
+import ProductDetailPage from "@/pages/product_detail";
 
 const router = createHashRouter([
   {
@@ -9,6 +10,10 @@ const router = createHashRouter([
     Component: DefaultLayout,
     children: [
       { index: true, Component: HomePage },
+      {
+        path: "products/:id",
+        Component: ProductDetailPage,
+      },
       {
         path: "cart",
         Component: CartPage,

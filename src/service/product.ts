@@ -24,6 +24,17 @@ export async function searchProducts(keyword: string): Promise<Product[]> {
   }
 }
 
+export async function getProduct(productId: number): Promise<Product> {
+  try {
+    const resp = await invoke<ApiResponse<Product | null>>("get_product", {
+      productId,
+    });
+    return ensureData(resp);
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+}
+
 export async function createProduct(payload: ProductPayload): Promise<Product> {
   try {
     const resp = await invoke<ApiResponse<Product | null>>("create_product", {

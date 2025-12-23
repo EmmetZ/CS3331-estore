@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +24,7 @@ import { Product } from "@/types";
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const deleteMutation = useDeleteProduct();
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
     try {
@@ -34,14 +36,32 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
     }
   };
 
+  const goDetail = () => navigate(`/products/${product.id}`);
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      goDetail();
+    }
+  };
+
   return (
     <>
-      <Card className="group relative flex flex-col gap-2 overflow-hidden">
+      <Card
+        className="group relative flex cursor-pointer flex-col gap-2 overflow-hidden"
+        onClick={goDetail}
+        onKeyDown={handleKeyDown}
+        role="button"
+        tabIndex={0}
+      >
         <Button
           variant="ghost"
           size="icon"
           className="hover:bg-destructive/10 hover:text-destructive absolute top-2 right-2 h-5 w-5 rounded-full opacity-0 transition-opacity group-hover:opacity-100"
-          onClick={() => setShowDeleteDialog(true)}
+          onClick={(event) => {
+            event.stopPropagation();
+            setShowDeleteDialog(true);
+          }}
         >
           <X className="h-3.5 w-3.5" />
         </Button>
