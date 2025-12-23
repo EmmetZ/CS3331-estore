@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"context"
 	"errors"
 	"estore-server/dto"
 	"estore-server/models"
@@ -32,10 +33,10 @@ func (s *AuthServiceImpl) LoginAuthenticator(c *gin.Context) (any, error) {
 
 	username, password := req.Username, req.Password
 
-	var user models.User
-
 	// Find user by username with associated UserAuth
-	if err := s.DB.Preload("UserAuth").Where("username = ?", username).First(&user).Error; err != nil {
+	ctx := context.Background()
+	user, err := gorm.G[models.User](s.DB).Preload("UserAuth", nil).Where("username = ?", username).First(ctx)
+	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.New("user not found")
 		}
