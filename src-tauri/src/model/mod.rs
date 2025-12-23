@@ -60,6 +60,14 @@ pub struct User {
     pub is_admin: bool,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub struct UpdateUserPayload {
+    pub username: String,
+    pub email: String,
+    pub phone: String,
+    pub address: String,
+}
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Product {
     pub id: u32,

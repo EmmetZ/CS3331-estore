@@ -1,7 +1,7 @@
 use crate::{
     client::Client,
     error::AppError,
-    model::{ApiResponse, User},
+    model::{ApiResponse, UpdateUserPayload, User},
 };
 
 impl Client {
@@ -16,5 +16,13 @@ impl Client {
         } else {
             Ok(resp)
         }
+    }
+
+    pub async fn update_user(
+        &self,
+        payload: &UpdateUserPayload,
+    ) -> Result<ApiResponse<User>, AppError> {
+        let header = self.auth_header().await?;
+        self.put("/user/me", payload, Some(header), true).await
     }
 }

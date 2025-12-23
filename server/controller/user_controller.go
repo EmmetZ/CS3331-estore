@@ -87,24 +87,9 @@ func (uc *UserController) GetUser(c *gin.Context) {
 }
 
 func (uc *UserController) UpdateUser(c *gin.Context) {
-	idParam := c.Param("id")
-	targetUserID, err := utils.ParseUintParam(idParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, dto.NewErrorResponse(http.StatusBadRequest, "Invalid user ID"))
-		return
-	}
-
 	requester, err := utils.GetUserFromCtx(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, dto.NewErrorResponse(http.StatusUnauthorized, "Unauthorized"))
-		return
-	}
-	requestingUserID := requester.ID
-	isAdmin := requester.IsAdmin
-
-	// Only allow admin or the user themselves to update the account
-	if !isAdmin && requestingUserID != targetUserID {
-		c.JSON(http.StatusForbidden, dto.NewErrorResponse(http.StatusForbidden, "Cannot update another user's information"))
 		return
 	}
 
@@ -114,7 +99,7 @@ func (uc *UserController) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := uc.UserService.UpdateUser(targetUserID, req.Username)
+	user, err := uc.UserService.UpdateUser(requester.ID, req.Username, req.Email, req.Phone, req.Address)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return

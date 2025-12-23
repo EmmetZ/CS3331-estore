@@ -1,10 +1,15 @@
 use crate::{
     error::AppError,
-    model::{ApiResponse, User},
+    model::{ApiResponse, UpdateUserPayload, User},
     APP,
 };
 
 #[tauri::command]
 pub async fn get_me() -> Result<ApiResponse<User>, AppError> {
     APP.get_me().await
+}
+
+#[tauri::command]
+pub async fn update_user(payload: UpdateUserPayload) -> Result<ApiResponse<User>, AppError> {
+    APP.update_user(payload).await
 }

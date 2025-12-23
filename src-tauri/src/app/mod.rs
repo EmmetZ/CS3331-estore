@@ -1,6 +1,6 @@
 use crate::client::Client;
 use crate::error::AppError;
-use crate::model::{ApiResponse, Product, ProductPayload, User};
+use crate::model::{ApiResponse, Product, ProductPayload, UpdateUserPayload, User};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tracing::debug;
@@ -92,5 +92,17 @@ impl App {
 
     pub async fn delete_product(&self, product_id: u32) -> Result<ApiResponse<()>, AppError> {
         self.client.delete_product(product_id).await
+    }
+
+    pub async fn update_user(
+        &self,
+        payload: UpdateUserPayload,
+    ) -> Result<ApiResponse<User>, AppError> {
+        let resp = self.client.update_user(&payload).await?;
+        if let Some(updated) = &resp.data {
+            let mut guard = self.user.write().await;
+            *guard = Some(updated.clone());
+        }
+        Ok(resp)
     }
 }

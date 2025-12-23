@@ -11,6 +11,9 @@ type RegisterRequest struct {
 // UpdateUserRequest DTO for updating user information
 type UpdateUserRequest struct {
 	Username string `json:"username" binding:"required,min=3,max=100"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	Address  string `json:"address"`
 }
 
 // UpdatePasswordRequest DTO for updating user password

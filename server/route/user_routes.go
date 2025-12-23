@@ -25,9 +25,8 @@ func (urm *UserRoutesModule) RegisterUserRoutes(group *gin.RouterGroup) {
 	// Current user routes
 	group.GET("/user/me", urm.controller.GetMe)
 
-	// Regular user can update their own information
-	// The controller will handle the logic to ensure users can only update their own profile
-	group.PUT("/user/:id", urm.controller.UpdateUser)
+	// Regular user updates their own information via JWT context
+	group.PUT("/user/me", urm.controller.UpdateUser)
 	group.PUT("/user/:id/password", urm.controller.UpdateUserPassword)
 
 	group.GET("/user/:id", urm.controller.GetUser)

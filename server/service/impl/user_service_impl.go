@@ -84,7 +84,7 @@ func (s *UserServiceImpl) GetAllUsers() ([]models.User, error) {
 }
 
 // UpdateUser updates user information
-func (s *UserServiceImpl) UpdateUser(userID uint, username string) (*models.User, error) {
+func (s *UserServiceImpl) UpdateUser(userID uint, username, email, phone, address string) (*models.User, error) {
 	ctx := context.Background()
 	user, err := gorm.G[models.User](s.DB).Where("id = ?", userID).First(ctx)
 	if err != nil {
@@ -93,6 +93,9 @@ func (s *UserServiceImpl) UpdateUser(userID uint, username string) (*models.User
 
 	// Update user
 	user.Username = username
+	user.Email = email
+	user.Phone = phone
+	user.Address = address
 
 	_, err = gorm.G[models.User](s.DB).Updates(ctx, user)
 	if err != nil {
