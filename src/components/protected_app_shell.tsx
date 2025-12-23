@@ -1,20 +1,15 @@
 import React from "react";
 import { Outlet } from "react-router";
-import AppSideBar from "@/components/app_sidebar";
 import { PageHeader } from "@/components/page_header";
+import AppSideBar from "@/components/sidebar/app_sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { SideBarItem } from "@/types";
 
-interface Props {
-  items: SideBarItem[];
-}
-
-const ProtectedAppShell: React.FC<Props> = ({ items }) => {
+const ProtectedAppShell: React.FC = () => {
   return (
     <SidebarProvider>
-      <AppSideBar items={items} />
+      <AppSideBar />
       <SidebarInset>
-        <PageHeader items={items} />
+        <PageHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <Outlet />

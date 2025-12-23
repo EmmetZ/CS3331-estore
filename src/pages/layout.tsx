@@ -1,4 +1,3 @@
-import { Package, ShoppingCart, User } from "lucide-react";
 import React from "react";
 import FullScreenError from "@/components/full_screen_error";
 import FullScreenLoader from "@/components/full_screen_loader";
@@ -6,28 +5,6 @@ import LoginPanel from "@/components/login_panel";
 import ProtectedAppShell from "@/components/protected_app_shell";
 import { Toaster } from "@/components/ui/sonner";
 import { useAuthContext } from "@/contexts/auth-context";
-import { SideBarItem } from "@/types";
-
-const sidebarItems: SideBarItem[] = [
-  {
-    key: "home",
-    title: "主页",
-    url: "/",
-    icon: Package,
-  },
-  {
-    key: "cart",
-    title: "购物车",
-    url: "/cart",
-    icon: ShoppingCart,
-  },
-  {
-    key: "profile",
-    title: "我的主页",
-    url: "/profile",
-    icon: User,
-  },
-];
 
 const DefaultLayout: React.FC = () => {
   const { user, isLoading, error, refetch } = useAuthContext();
@@ -48,7 +25,7 @@ const DefaultLayout: React.FC = () => {
   } else if (!user) {
     content = <LoginPanel />;
   } else {
-    content = <ProtectedAppShell items={sidebarItems} />;
+    content = <ProtectedAppShell />;
   }
 
   return (

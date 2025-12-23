@@ -1,19 +1,16 @@
 import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
+import { sidebarItems } from "@/components/sidebar/sidebar_item";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { SideBarItem } from "@/types";
 
-interface Props {
-  items: SideBarItem[];
-}
-
-export const PageHeader: React.FC<Props> = ({ items }) => {
+export const PageHeader: React.FC = () => {
   const loc = useLocation();
   const navigate = useNavigate();
   const pathname = loc.pathname;
   const isProductDetail = pathname.startsWith("/products/");
+  const items = sidebarItems;
 
   const matched =
     items.find((item) => item.url === pathname) ??

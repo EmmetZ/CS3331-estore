@@ -1,7 +1,7 @@
 import React from "react";
-import NavHeader from "@/components/nav_header";
-import NavMain from "@/components/nav_main";
-import NavUser from "@/components/nav_user";
+import NavHeader from "@/components/sidebar/nav_header";
+import NavMain from "@/components/sidebar/nav_main";
+import NavUser from "@/components/sidebar/nav_user";
 import {
   Sidebar,
   SidebarContent,
@@ -9,14 +9,9 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { useAuthContext } from "@/contexts/auth-context";
-import { SideBarItem } from "@/types";
 
-interface Props {
-  items: SideBarItem[];
-}
-
-const AppSideBar: React.FC<Props> = ({ items }) => {
-  const { user, logout, isLoggingOut } = useAuthContext();
+const AppSideBar: React.FC = () => {
+  const { user } = useAuthContext();
 
   return (
     <Sidebar collapsible="icon">
@@ -24,7 +19,7 @@ const AppSideBar: React.FC<Props> = ({ items }) => {
         <NavHeader />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={items} />
+        <NavMain />
       </SidebarContent>
       <SidebarFooter>{user && <NavUser />}</SidebarFooter>
     </Sidebar>

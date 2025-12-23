@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
+import { sidebarItems } from "@/components/sidebar/sidebar_item";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -7,15 +8,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { SideBarItem } from "@/types";
 
-interface Props {
-  items: SideBarItem[];
-}
-
-const NavMain: React.FC<Props> = ({ items }) => {
+const NavMain: React.FC = () => {
   const loc = useLocation();
   const navigate = useNavigate();
+  const items = sidebarItems;
 
   return (
     <SidebarGroup>
