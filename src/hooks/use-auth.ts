@@ -30,7 +30,7 @@ export function useLogoutMutation() {
   return useMutation({
     mutationFn: () => logout(),
     onSuccess: () => {
-      qc.setQueryData(authKeys.current, null);
+      qc.clear();
     },
   });
 }
