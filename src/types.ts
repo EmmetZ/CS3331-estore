@@ -19,6 +19,13 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface UpdateUserPayload {
+  username: string;
+  email: string;
+  phone: string;
+  address: string;
+}
+
 // form data interface
 export interface ProductFormData {
   name: string;

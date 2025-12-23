@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCurrentUser, login, logout } from "@/service/user";
-import { LoginPayload, User } from "@/types";
+import { getCurrentUser, login, logout, updateUser } from "@/service/user";
+import { LoginPayload, UpdateUserPayload, User } from "@/types";
 
 const authKeys = {
   current: ["current-user"] as const,
@@ -31,6 +31,17 @@ export function useLogoutMutation() {
     mutationFn: () => logout(),
     onSuccess: () => {
       qc.setQueryData(authKeys.current, null);
+    },
+  });
+}
+
+export function useUpdateProfile() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: UpdateUserPayload) => updateUser(payload),
+    onSuccess: async (user) => {
+      qc.setQueryData(authKeys.current, user);
+      await qc.invalidateQueries({ queryKey: authKeys.current });
     },
   });
 }

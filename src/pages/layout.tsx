@@ -1,4 +1,4 @@
-import { Package, ShoppingCart } from "lucide-react";
+import { Package, ShoppingCart, User } from "lucide-react";
 import React from "react";
 import FullScreenError from "@/components/full_screen_error";
 import FullScreenLoader from "@/components/full_screen_loader";
@@ -20,6 +20,12 @@ const sidebarItems: SideBarItem[] = [
     title: "购物车",
     url: "/cart",
     icon: ShoppingCart,
+  },
+  {
+    key: "profile",
+    title: "我的主页",
+    url: "/profile",
+    icon: User,
   },
 ];
 

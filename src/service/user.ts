@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { getErrorMessage } from "@/lib/utils";
-import { ApiResponse, LoginPayload, User } from "@/types";
+import { ApiResponse, LoginPayload, UpdateUserPayload, User } from "@/types";
 
 const AUTH_ERROR_KEYWORDS = ["login", "token", "unauthorized", "401", "403"];
 
@@ -41,6 +41,20 @@ export async function getCurrentUser(): Promise<User | null> {
       return null;
     }
     throw new Error(message);
+  }
+}
+
+export async function updateUser(payload: UpdateUserPayload): Promise<User> {
+  try {
+    const resp = await invoke<ApiResponse<User | null>>("update_user", {
+      payload,
+    });
+    if (!resp.data) {
+      throw new Error(resp.message || "更新失败");
+    }
+    return resp.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
   }
 }
 
