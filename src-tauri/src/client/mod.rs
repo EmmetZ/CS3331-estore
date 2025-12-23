@@ -83,7 +83,7 @@ impl Client {
         .await
     }
 
-    pub async fn get<TResult, TQuery>(
+    pub async fn get<TQuery, TResult>(
         &self,
         path: &str,
         query: Option<&TQuery>,

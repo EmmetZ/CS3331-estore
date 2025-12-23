@@ -8,7 +8,7 @@ impl Client {
     pub async fn get_me(&self) -> Result<ApiResponse<User>, AppError> {
         let header = self.auth_header().await?;
         let resp = self
-            .get::<User, _>("/user/me", None::<()>.as_ref(), Some(header), true)
+            .get::<(), User>("/user/me", None, Some(header), true)
             .await?;
 
         if resp.data.is_none() {
