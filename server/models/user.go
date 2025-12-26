@@ -10,7 +10,7 @@ type User struct {
 	IsAdmin  bool   `json:"is_admin" gorm:"not null;default:false"`
 
 	// One-to-one relationship with UserAuth (shared primary key)
-	UserAuth UserAuth `json:"-" gorm:"foreignKey:ID;references:ID;constraint:OnDelete:CASCADE;OnUpdate:CASCADE"`
+	UserAuth UserAuth `json:"-" gorm:"foreignKey:ID;constraint:OnDelete:CASCADE;OnUpdate:CASCADE"`
 
 	// One-to-many relationship with Product
 	Products []Product `json:"products,omitempty" gorm:"foreignKey:UserID"`
@@ -21,5 +21,5 @@ type UserAuth struct {
 	ID       uint   `json:"id" gorm:"primaryKey;autoIncrement:false"`
 	Password string `json:"-" gorm:"not null;size:255"` // Password will be stored as hashed value
 
-	User     *User  `json:"-" gorm:"constraint:OnDelete:CASCADE;OnUpdate:CASCADE;foreignKey:ID;references:ID"`
+	// User     *User  `json:"-" gorm:"constraint:OnDelete:CASCADE;OnUpdate:CASCADE;foreignKey:ID;references:ID"`
 }
