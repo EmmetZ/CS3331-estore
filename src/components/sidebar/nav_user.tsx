@@ -25,9 +25,9 @@ const getInitials = (name: string) => {
 
 const NavUser: React.FC = () => {
   const { user, logout, isLoggingOut } = useAuthContext();
-  if (!user) return null;
-
   const { isMobile } = useSidebar();
+
+  if (!user) return null;
 
   const initials = getInitials(user.username);
 
