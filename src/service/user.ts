@@ -4,6 +4,7 @@ import type {
   ApiResponse,
   LoginPayload,
   PartialUser,
+  RegisterPayload,
   UpdateUserPayload,
   User,
 } from "@/types";
@@ -71,6 +72,18 @@ export async function getAllUsers(): Promise<PartialUser[]> {
       throw new Error(resp.message || "获取用户列表失败");
     }
     return resp.data;
+  } catch (error) {
+    throw new Error(getErrorMessage(error));
+  }
+}
+
+export async function register(payload: RegisterPayload) {
+  try {
+    const resp = await invoke<ApiResponse<null>>("register", { ...payload });
+    if (!resp.success) {
+      throw new Error(resp.message || "注册失败");
+    }
+    return resp;
   } catch (error) {
     throw new Error(getErrorMessage(error));
   }

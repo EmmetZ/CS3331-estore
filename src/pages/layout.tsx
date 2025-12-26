@@ -23,7 +23,11 @@ const DefaultLayout: React.FC = () => {
       />
     );
   } else if (!user) {
-    content = <LoginPanel />;
+    content = (
+      <div className="bg-muted/40 flex min-h-screen flex-col items-center justify-center px-4 py-6">
+        <LoginPanel />
+      </div>
+    );
   } else {
     content = <ProtectedAppShell />;
   }

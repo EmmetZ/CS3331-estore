@@ -3,10 +3,20 @@ import AdminPage from "@/pages/admin";
 import { CartPage } from "@/pages/cart";
 import HomePage from "@/pages/home";
 import DefaultLayout from "@/pages/layout";
+import LoginPage from "@/pages/login";
 import ProductDetailPage from "@/pages/product_detail";
+import RegisterPage from "@/pages/register";
 import UserProfilePage from "@/pages/user_profile";
 
 const router = createHashRouter([
+  {
+    path: "/login",
+    Component: LoginPage,
+  },
+  {
+    path: "/register",
+    Component: RegisterPage,
+  },
   {
     path: "/",
     Component: DefaultLayout,

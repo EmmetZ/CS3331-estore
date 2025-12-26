@@ -55,7 +55,9 @@ const AddButton: React.FC<Props> = ({ className }) => {
     const description = formData.description.trim();
     const parsedPrice = parseFloat(formData.price);
     const isPriceValid =
-      formData.price.trim() !== "" && Number.isFinite(parsedPrice) && parsedPrice > 0;
+      formData.price.trim() !== "" &&
+      Number.isFinite(parsedPrice) &&
+      parsedPrice > 0;
 
     // required field validation
     if (!name || !description || !isPriceValid) {
