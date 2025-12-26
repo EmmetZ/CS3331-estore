@@ -1,5 +1,8 @@
-import React from "react";
-import { useParams } from "react-router";
+import type React from "react";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,9 +10,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuthContext } from "@/contexts/auth-context";
 import { useProduct } from "@/hooks/use-products";
+import { useDeleteProduct } from "@/hooks/use-products";
 
 const PriceTag: React.FC<{ value: number }> = ({ value }) => (
   <span className="text-primary text-2xl font-bold">
@@ -40,6 +53,10 @@ const ProductDetailPage: React.FC = () => {
   const { id } = useParams();
   const productId = Number(id);
   const { data, isLoading, isError, error } = useProduct(productId);
+  const deleteMutation = useDeleteProduct();
+  const { user } = useAuthContext();
+  const navigate = useNavigate();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const invalidId = !id || Number.isNaN(productId);
 
@@ -101,6 +118,19 @@ const ProductDetailPage: React.FC = () => {
     );
   }
 
+  const canDelete = Boolean(user && data.seller && data.seller.id === user.id);
+
+  const handleDelete = async () => {
+    try {
+      await deleteMutation.mutateAsync(productId);
+      toast.success("商品已删除");
+      setShowDeleteDialog(false);
+      navigate("/");
+    } catch (err) {
+      toast.error("删除失败: " + String(err));
+    }
+  };
+
   const sellerItems: SellerItem[] = [];
   const seller = data.seller;
 
@@ -112,6 +142,8 @@ const ProductDetailPage: React.FC = () => {
     sellerItems.push({ label: "电话", value: seller.phone.trim() });
   if (seller?.address?.trim())
     sellerItems.push({ label: "地址", value: seller.address.trim() });
+
+  const showSellerSection = sellerItems.length > 0 || canDelete;
 
   return (
     <div className="space-y-4 px-4 pb-6">
@@ -130,9 +162,51 @@ const ProductDetailPage: React.FC = () => {
         </CardHeader>
         <CardContent className="space-y-3">
           <Separator />
-          <SellerInfo items={sellerItems} />
+          {showSellerSection && (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              {sellerItems.length > 0 && <SellerInfo items={sellerItems} />}
+              {canDelete && (
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="self-start"
+                  onClick={() => setShowDeleteDialog(true)}
+                  disabled={deleteMutation.isPending}
+                >
+                  删除商品
+                </Button>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>确认删除</DialogTitle>
+            <DialogDescription>
+              确定要删除商品 "{data.name}" 吗？此操作无法撤销。
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={deleteMutation.isPending}
+            >
+              取消
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? "删除中..." : "确认删除"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
