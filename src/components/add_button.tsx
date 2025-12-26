@@ -20,6 +20,9 @@ import {
 import { useAddProduct } from "@/hooks/use-products";
 import type { ProductFormData, ProductPayload } from "@/types";
 
+// local state allows empty price input while keeping payload numeric
+type ProductFormState = Omit<ProductFormData, "price"> & { price: string };
+
 // mark component for required fields
 const RequiredMark = () => <span className="text-red-500">*</span>;
 
@@ -30,14 +33,14 @@ interface Props {
 const AddButton: React.FC<Props> = ({ className }) => {
   const [isOpen, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState<ProductFormData>({
+  const [formData, setFormData] = useState<ProductFormState>({
     name: "",
     description: "",
-    price: 0,
+    price: "",
   });
 
   const handleInputChange = (
-    field: keyof ProductFormData,
+    field: keyof ProductFormState,
     value: string | number
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -48,22 +51,23 @@ const AddButton: React.FC<Props> = ({ className }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    const name = formData.name.trim();
+    const description = formData.description.trim();
+    const parsedPrice = parseFloat(formData.price);
+    const isPriceValid =
+      formData.price.trim() !== "" && Number.isFinite(parsedPrice) && parsedPrice > 0;
+
     // required field validation
-    if (!formData.name || !formData.description || formData.price <= 0) {
+    if (!name || !description || !isPriceValid) {
       toast.error("请填写所有必填字段，价格必须大于0");
       return;
     }
 
     const payload: ProductPayload = {
-      name: formData.name.trim(),
-      description: formData.description.trim(),
-      price: Math.round(formData.price * 100),
+      name,
+      description,
+      price: Math.round(parsedPrice * 100),
     };
-
-    if (!payload.name || !payload.description || payload.price <= 0) {
-      toast.error("请输入合法的商品信息");
-      return;
-    }
 
     setIsLoading(true);
 
@@ -74,7 +78,7 @@ const AddButton: React.FC<Props> = ({ className }) => {
       setFormData({
         name: "",
         description: "",
-        price: 0,
+        price: "",
       });
 
       setOpen(false);
@@ -91,7 +95,7 @@ const AddButton: React.FC<Props> = ({ className }) => {
     setFormData({
       name: "",
       description: "",
-      price: 0,
+      price: "",
     });
     setOpen(false);
   };
@@ -131,14 +135,7 @@ const AddButton: React.FC<Props> = ({ className }) => {
                     min="0"
                     step="0.01"
                     value={formData.price}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "price",
-                        Number.isNaN(parseFloat(e.target.value))
-                          ? 0
-                          : parseFloat(e.target.value)
-                      )
-                    }
+                    onChange={(e) => handleInputChange("price", e.target.value)}
                     placeholder="请输入价格"
                     required
                   />
