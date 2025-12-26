@@ -34,7 +34,7 @@ func (urm *UserRoutesModule) RegisterUserRoutes(group *gin.RouterGroup) {
 
 func (urm *UserRoutesModule) RegisterAdminRoutes(group *gin.RouterGroup) {
 	// User management routes (admin only)
-	group.GET("/user", urm.controller.GetAllUsers)
+	group.GET("/users", urm.controller.GetAllUsers)
 	group.DELETE("/user/:id", urm.controller.DeleteUser)
 }
 

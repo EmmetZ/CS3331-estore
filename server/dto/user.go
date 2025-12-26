@@ -32,6 +32,13 @@ type UserDTO struct {
 	IsAdmin  bool   `json:"is_admin"`
 }
 
+type PartialUserDTO struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	IsAdmin  bool   `json:"is_admin"`
+}
+
 func NewUserDTO(user *models.User) *UserDTO {
 	return &UserDTO{
 		ID:       user.ID,
@@ -43,7 +50,11 @@ func NewUserDTO(user *models.User) *UserDTO {
 	}
 }
 
-// UsersResponse DTO for multiple users
-type UsersResponse struct {
-	Data []UserDTO `json:"data"`
+func NewParitialUserDTO(user *models.User) *PartialUserDTO {
+	return &PartialUserDTO{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		IsAdmin:  user.IsAdmin,
+	}
 }

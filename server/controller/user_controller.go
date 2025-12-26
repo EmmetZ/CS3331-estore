@@ -154,9 +154,9 @@ func (uc *UserController) GetAllUsers(c *gin.Context) {
 		return
 	}
 
-	var userResponses []dto.UserDTO
+	var userResponses []dto.PartialUserDTO
 	for _, u := range users {
-		userResponses = append(userResponses, *dto.NewUserDTO(&u))
+		userResponses = append(userResponses, *dto.NewParitialUserDTO(&u))
 	}
 
 	c.JSON(http.StatusOK, dto.NewSuccessResponse(http.StatusOK, userResponses, "Users retrieved successfully"))
