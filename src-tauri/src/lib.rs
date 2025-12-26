@@ -36,6 +36,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             api::auth::login,
             api::auth::logout,
+            api::auth::register,
             api::auth::refresh_token,
             api::user::get_me,
             api::user::update_user,

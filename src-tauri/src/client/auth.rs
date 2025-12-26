@@ -1,6 +1,6 @@
 use super::{token, Client};
 use crate::error::AppError;
-use crate::model::{ApiResponse, AuthTokensResponse, LoginRequest};
+use crate::model::{ApiResponse, AuthTokensResponse, LoginRequest, RegisterRequest};
 use serde_json::json;
 use tracing::debug;
 
@@ -20,6 +20,21 @@ impl Client {
             response.success,
             None,
         ))
+    }
+
+    pub async fn register(
+        &self,
+        username: &str,
+        email: &str,
+        password: &str,
+    ) -> Result<ApiResponse<()>, AppError> {
+        let payload = RegisterRequest {
+            username: username.to_string(),
+            email: email.to_string(),
+            password: password.to_string(),
+        };
+        let response: ApiResponse<()> = self.post("/register", &payload, None, false).await?;
+        Ok(response)
     }
 
     pub async fn logout(&self) -> Result<ApiResponse<()>, AppError> {

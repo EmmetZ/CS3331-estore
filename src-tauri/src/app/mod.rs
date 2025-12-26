@@ -26,6 +26,15 @@ impl App {
         self.client.login(&username, &password).await
     }
 
+    pub async fn register(
+        &self,
+        username: String,
+        email: String,
+        password: String,
+    ) -> Result<ApiResponse<()>, AppError> {
+        self.client.register(&username, &email, &password).await
+    }
+
     pub async fn logout(&self) -> Result<ApiResponse<()>, AppError> {
         let resp = self.client.logout().await?;
         let mut guard = self.user.write().await;

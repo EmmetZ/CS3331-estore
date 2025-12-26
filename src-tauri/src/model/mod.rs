@@ -15,6 +15,13 @@ impl LoginRequest {
     }
 }
 
+#[derive(Debug, Serialize)]
+pub struct RegisterRequest {
+    pub username: String,
+    pub email: String,
+    pub password: String,
+}
+
 #[derive(Debug, Deserialize)]
 pub struct AuthTokensResponse {
     pub access_token: String,
@@ -30,11 +37,8 @@ fn default_token_type() -> String {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ApiResponse<T> {
-    #[serde(default)]
     pub code: u16,
-    #[serde(default)]
     pub message: String,
-    #[serde(default)]
     pub success: bool,
     pub data: Option<T>,
 }
