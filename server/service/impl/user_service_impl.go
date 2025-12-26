@@ -23,42 +23,6 @@ func NewUserServiceImpl(db *gorm.DB) *UserServiceImpl {
 	}
 }
 
-// RegisterUser creates a new user with encrypted password
-func (s *UserServiceImpl) RegisterUser(username, password string, isAdmin bool) (*models.User, error) {
-	// Check if user already exists
-	ctx := context.Background()
-
-	_, err := gorm.G[models.User](s.DB).Where("username = ?", username).First(ctx)
-	if err == nil {
-		return nil, errors.New("username already exists")
-	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, err
-	}
-
-	// Hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, errors.New("failed to hash password")
-	}
-
-	// Create user
-	user := &models.User{
-		Username: username,
-		IsAdmin:  isAdmin,
-		UserAuth: models.UserAuth{
-			Password: string(hashedPassword),
-		},
-	}
-
-	err = gorm.G[models.User](s.DB).Create(ctx, user)
-
-	if err != nil {
-		return nil, errors.New("failed to create user")
-	}
-
-	return user, nil
-}
-
 // GetUser retrieves user by ID
 func (s *UserServiceImpl) GetUser(userID uint) (*models.User, error) {
 	ctx := context.Background()

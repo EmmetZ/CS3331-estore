@@ -50,3 +50,43 @@ func (s *AuthServiceImpl) LoginAuthenticator(c *gin.Context) (any, error) {
 
 	return &user, nil
 }
+
+// RegisterUser creates a new user with encrypted password
+func (s *AuthServiceImpl) RegisterUser(username, email, password string) error {
+	// Check if user already exists
+	ctx := context.Background()
+
+	_, err := gorm.G[models.User](s.DB).Where("username = ?", username).First(ctx)
+	if err == nil {
+		return errors.New("username already exists")
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
+	}
+
+	// Hash password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return errors.New("failed to hash password")
+	}
+
+	user := &models.User{
+		Username: username,
+		Email:    email,
+		IsAdmin:  false,
+		UserAuth: models.UserAuth{
+			Password: string(hashedPassword),
+		},
+	}
+	err = s.DB.Transaction(func(tx *gorm.DB) error {
+		if err := gorm.G[models.User](tx).Create(ctx, user); err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

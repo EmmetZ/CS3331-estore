@@ -39,7 +39,8 @@ func initParams(db *gorm.DB) *ginjwt.GinJWTMiddleware {
 
 	return &ginjwt.GinJWTMiddleware{
 		Key:             []byte(getKey()),
-		Timeout:         time.Hour,
+		// Timeout:         time.Hour,
+		Timeout:         time.Second * 10,
 		MaxRefresh:      time.Hour * 24 * 7,
 		Authenticator:   authService.LoginAuthenticator,
 		Unauthorized:    unauthorized,

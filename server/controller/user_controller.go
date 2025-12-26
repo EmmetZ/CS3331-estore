@@ -15,6 +15,7 @@ import (
 
 type UserController struct {
 	UserService service.UserService
+	AuthService service.AuthService
 }
 
 func NewUserController(db *gorm.DB) *UserController {
@@ -31,19 +32,13 @@ func (uc *UserController) Register(c *gin.Context) {
 	}
 
 	// For registration, we'll only allow regular users (not admins)
-	user, err := uc.UserService.RegisterUser(req.Username, req.Password, false)
+	err := uc.AuthService.RegisterUser(req.Username, req.Email, req.Password)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, dto.NewErrorResponse(http.StatusInternalServerError, err.Error()))
 		return
 	}
 
-	responseData := dto.UserDTO{
-		ID:       user.ID,
-		Username: user.Username,
-		IsAdmin:  user.IsAdmin,
-	}
-
-	c.JSON(http.StatusCreated, dto.NewSuccessResponse(http.StatusCreated, responseData, "User registered successfully"))
+	c.JSON(http.StatusCreated, dto.NewSuccessResponse(http.StatusCreated, nil, "User registered successfully"))
 }
 
 func (uc *UserController) GetMe(c *gin.Context) {

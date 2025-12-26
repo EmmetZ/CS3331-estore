@@ -6,7 +6,6 @@ import (
 
 // UserService defines the interface for user-related operations
 type UserService interface {
-	RegisterUser(username, password string, isAdmin bool) (*models.User, error)
 	GetUser(userID uint) (*models.User, error)
 	GetAllUsers() ([]models.User, error)
 	UpdateUser(userID uint, username, email, phone, address string) (*models.User, error)
