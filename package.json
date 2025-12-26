@@ -10,7 +10,7 @@
     "tauri": "tauri",
     "lint": "eslint .",
     "fmt": "prettier --write -l .",
-    "check": "prettier --check -l .",
+    "check": "prettier --check .",
     "fmt:rs": "cargo fmt --manifest-path src-tauri/Cargo.toml",
     "check:rs": "cargo check --manifest-path src-tauri/Cargo.toml"
   },
