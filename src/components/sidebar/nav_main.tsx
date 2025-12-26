@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router";
-import { sidebarItems } from "@/components/sidebar/sidebar_item";
+import { getSidebarItems } from "@/components/sidebar/sidebar_item";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -8,11 +8,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuthContext } from "@/contexts/auth-context";
 
 const NavMain: React.FC = () => {
   const loc = useLocation();
   const navigate = useNavigate();
-  const items = sidebarItems;
+  const { user } = useAuthContext();
+  const items = getSidebarItems(user?.is_admin);
 
   return (
     <SidebarGroup>

@@ -5,4 +5,5 @@ export interface SideBarItem {
   title: string;
   url: string;
   icon: LucideIcon;
+  adminOnly?: boolean;
 }

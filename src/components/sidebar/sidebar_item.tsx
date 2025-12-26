@@ -1,7 +1,7 @@
-import { Package, ShoppingCart, User } from "lucide-react";
+import { Package, ShieldCheck, ShoppingCart, User } from "lucide-react";
 import type { SideBarItem } from "@/components/sidebar/types";
 
-export const sidebarItems: SideBarItem[] = [
+const baseItems: SideBarItem[] = [
   {
     key: "home",
     title: "主页",
@@ -20,4 +20,16 @@ export const sidebarItems: SideBarItem[] = [
     url: "/profile",
     icon: User,
   },
+  {
+    key: "admin",
+    title: "管理员",
+    url: "/admin",
+    icon: ShieldCheck,
+    adminOnly: true,
+  },
 ];
+
+export const getSidebarItems = (isAdmin: boolean | undefined) =>
+  baseItems.filter((item) => !item.adminOnly || isAdmin);
+
+export { baseItems as sidebarItems };

@@ -1,4 +1,5 @@
 import { createHashRouter } from "react-router";
+import AdminPage from "@/pages/admin";
 import { CartPage } from "@/pages/cart";
 import HomePage from "@/pages/home";
 import DefaultLayout from "@/pages/layout";
@@ -22,6 +23,10 @@ const router = createHashRouter([
       {
         path: "profile",
         Component: UserProfilePage,
+      },
+      {
+        path: "admin",
+        Component: AdminPage,
       },
     ],
   },

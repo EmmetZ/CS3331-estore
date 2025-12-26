@@ -1,16 +1,18 @@
 import { ArrowLeft } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
-import { sidebarItems } from "@/components/sidebar/sidebar_item";
+import { getSidebarItems } from "@/components/sidebar/sidebar_item";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useAuthContext } from "@/contexts/auth-context";
 
 export const PageHeader: React.FC = () => {
   const loc = useLocation();
   const navigate = useNavigate();
   const pathname = loc.pathname;
   const isProductDetail = pathname.startsWith("/products/");
-  const items = sidebarItems;
+  const { user } = useAuthContext();
+  const items = getSidebarItems(user?.is_admin);
 
   const matched =
     items.find((item) => item.url === pathname) ??

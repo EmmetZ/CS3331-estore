@@ -54,3 +54,10 @@ export interface User {
   address: string;
   is_admin: boolean;
 }
+
+export interface PartialUser {
+  id: number;
+  username: string;
+  email: string;
+  is_admin: boolean;
+}
