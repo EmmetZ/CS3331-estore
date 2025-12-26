@@ -1,7 +1,7 @@
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PartialUser } from "@/types";
+import type { PartialUser } from "@/types";
 
 interface UsersTabProps {
   data?: PartialUser[];

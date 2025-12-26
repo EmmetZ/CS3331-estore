@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAddProduct } from "@/hooks/use-products";
-import { ProductFormData, ProductPayload } from "@/types";
+import type { ProductFormData, ProductPayload } from "@/types";
 
 // mark component for required fields
 const RequiredMark = () => <span className="text-red-500">*</span>;

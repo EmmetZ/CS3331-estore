@@ -1,7 +1,7 @@
 import React from "react";
 import ProductCard from "@/components/product_card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Product } from "@/types";
+import type { Product } from "@/types";
 
 const SkeletonCard = () => (
   <div className="space-y-3">

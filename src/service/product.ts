@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { getErrorMessage } from "@/lib/utils";
-import { ApiResponse, Product, ProductPayload } from "@/types";
+import type { ApiResponse, Product, ProductPayload } from "@/types";
 
 const ensureData = <T>(resp: ApiResponse<T | null>): T => {
   if (resp.data == null) {

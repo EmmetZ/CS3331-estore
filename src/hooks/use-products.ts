@@ -6,7 +6,7 @@ import {
   searchProducts,
   updateProduct,
 } from "@/service/product";
-import { Product, ProductPayload } from "@/types";
+import type { Product, ProductPayload } from "@/types";
 
 const productKeys = {
   all: ["products"] as const,

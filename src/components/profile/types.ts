@@ -1,4 +1,4 @@
-import { UpdateUserPayload } from "@/types";
+import type { UpdateUserPayload } from "@/types";
 
 export type ProfileFormState = Pick<
   UpdateUserPayload,

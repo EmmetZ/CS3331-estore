@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Product } from "@/types";
+import type { Product } from "@/types";
 
 interface ProductsTabProps {
   data?: Product[];

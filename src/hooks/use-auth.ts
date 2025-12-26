@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser, login, logout, updateUser } from "@/service/user";
-import { LoginPayload, UpdateUserPayload, User } from "@/types";
+import type { LoginPayload, UpdateUserPayload, User } from "@/types";
 
 const authKeys = {
   current: ["current-user"] as const,

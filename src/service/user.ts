@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { getErrorMessage } from "@/lib/utils";
-import {
+import type {
   ApiResponse,
   LoginPayload,
   PartialUser,

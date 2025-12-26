@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from "react";
 import { useCurrentUser, useLogoutMutation } from "@/hooks/use-auth";
-import { User } from "@/types";
+import type { User } from "@/types";
 
 export interface AuthContextValue {
   user: User | null;

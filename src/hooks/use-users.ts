@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllUsers } from "@/service/user";
-import { PartialUser } from "@/types";
+import type { PartialUser } from "@/types";
 
 const userKeys = {
   all: ["admin-users"] as const,
