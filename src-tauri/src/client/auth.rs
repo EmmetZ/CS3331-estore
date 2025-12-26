@@ -39,9 +39,7 @@ impl Client {
 
     pub async fn logout(&self) -> Result<ApiResponse<()>, AppError> {
         let header = self.auth_header().await?;
-        let resp: ApiResponse<()> = self
-            .post("/logout", &json!({}), Some(header), false)
-            .await?;
+        let resp: ApiResponse<()> = self.post("/logout", &json!({}), Some(header), true).await?;
         self.clear_tokens().await?;
         Ok(resp)
     }
