@@ -1,7 +1,7 @@
 use crate::{
     client::Client,
     error::AppError,
-    model::{ApiResponse, UpdateUserPayload, User},
+    model::{ApiResponse, PartialUser, UpdateUserPayload, User},
 };
 
 impl Client {
@@ -24,5 +24,11 @@ impl Client {
     ) -> Result<ApiResponse<User>, AppError> {
         let header = self.auth_header().await?;
         self.put("/user/me", payload, Some(header), true).await
+    }
+
+    pub async fn get_all_users(&self) -> Result<ApiResponse<Vec<PartialUser>>, AppError> {
+        let header = self.auth_header().await?;
+        self.get::<(), Vec<PartialUser>>("/admin/users", None, Some(header), true)
+            .await
     }
 }

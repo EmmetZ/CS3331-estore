@@ -1,6 +1,6 @@
 use crate::client::Client;
 use crate::error::AppError;
-use crate::model::{ApiResponse, Product, ProductPayload, UpdateUserPayload, User};
+use crate::model::{ApiResponse, PartialUser, Product, ProductPayload, UpdateUserPayload, User};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use tracing::debug;
@@ -57,6 +57,9 @@ impl App {
             *guard = resp.data.clone();
             if let Some(user) = &resp.data {
                 debug!(username = %user.username, email = %user.email, "fetched and cached current user");
+                if user.is_admin {
+                    debug!("current user is an admin");
+                }
             }
             return Ok(resp);
         }
@@ -104,5 +107,9 @@ impl App {
             *guard = Some(updated.clone());
         }
         Ok(resp)
+    }
+
+    pub async fn get_all_users(&self) -> Result<ApiResponse<Vec<PartialUser>>, AppError> {
+        self.client.get_all_users().await
     }
 }

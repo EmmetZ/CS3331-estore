@@ -60,6 +60,14 @@ pub struct User {
     pub is_admin: bool,
 }
 
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct PartialUser {
+    pub id: u32,
+    pub username: String,
+    pub email: String,
+    pub is_admin: bool,
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct UpdateUserPayload {
     pub username: String,
