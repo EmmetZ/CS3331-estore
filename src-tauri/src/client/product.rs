@@ -25,7 +25,7 @@ impl Client {
             None
         };
 
-        self.get("/product", query_ref, Some(header), true).await
+        self.get("/products", query_ref, Some(header), true).await
     }
 
     pub async fn create_product(

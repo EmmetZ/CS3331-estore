@@ -21,17 +21,13 @@ func NewProductRoutesModule(db *gorm.DB) *ProductRoutesModule {
 func (prm *ProductRoutesModule) RegisterPublicRoutes(group *gin.RouterGroup) {}
 
 func (prm *ProductRoutesModule) RegisterUserRoutes(group *gin.RouterGroup) {
-	group.GET("/product", prm.controller.SearchProducts)
+	group.GET("/products", prm.controller.SearchProducts)
 	group.GET("/product/:id", prm.controller.GetProductByID)
 	group.POST("/product", prm.controller.CreateProduct)
 	group.PUT("/product/:id", prm.controller.UpdateProduct)
 	group.DELETE("/product/:id", prm.controller.DeleteProduct)
 }
 
-func (prm *ProductRoutesModule) RegisterAdminRoutes(group *gin.RouterGroup) {
-	group.GET("/product", prm.controller.SearchProducts)
-	group.PUT("/product/:id", prm.controller.UpdateProduct)
-	group.DELETE("/product/:id", prm.controller.DeleteProduct)
-}
+func (prm *ProductRoutesModule) RegisterAdminRoutes(group *gin.RouterGroup) {}
 
 var _ RouteModule = (*ProductRoutesModule)(nil)
