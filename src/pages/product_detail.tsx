@@ -118,7 +118,9 @@ const ProductDetailPage: React.FC = () => {
     );
   }
 
-  const canDelete = Boolean(user && data.seller && data.seller.id === user.id);
+  const canDelete = Boolean(
+    user && ((data.seller && data.seller.id === user.id) || user.is_admin)
+  );
 
   const handleDelete = async () => {
     try {
