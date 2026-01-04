@@ -22,12 +22,7 @@ export default function LoginPanel() {
 
   const handleLoginSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    loginMutation.mutate(
-      { username: username.trim(), password },
-      {
-        onSuccess: () => navigate("/"),
-      }
-    );
+    loginMutation.mutate({ username: username.trim(), password });
   };
 
   return (
