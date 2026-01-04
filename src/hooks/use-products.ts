@@ -47,7 +47,9 @@ export function useDeleteProduct() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id: number) => deleteProduct(id),
-    onSuccess: async () => {
+    onSuccess: async (_data, id) => {
+      // Remove the detail query so it stops refetching after deletion
+      qc.removeQueries({ queryKey: productKeys.detail(id), exact: true });
       await qc.invalidateQueries({ queryKey: productKeys.all });
     },
   });
